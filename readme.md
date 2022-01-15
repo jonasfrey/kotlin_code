@@ -1,9 +1,14 @@
 # create a new project 
 
-this will create a new folder with the following 
-        - ./variable_project_name 
-        - ./variable_project_name/variable_project_name.c 
-        - ./variable_project_name/Makefile
+this will create a new folder with the following <br>
+        - ./variable_project_name <br>
+        - ./variable_project_name/variable_project_name.c <br> 
+        - ./variable_project_name/Makefile <br>
+# compile 
+./compile_and_run.sh
+
+# run 
+./run.sh
 
 ```
 node create_new_folder_project.js variable_project_name 
