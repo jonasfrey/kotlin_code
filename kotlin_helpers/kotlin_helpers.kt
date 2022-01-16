@@ -3,6 +3,46 @@
 
 package kotlin_helpers
 
+
+private const val ANSI_COLOR_BLACK = "\u001b[30m"
+private const val ANSI_COLOR_RED = "\u001b[31m"
+private const val ANSI_COLOR_GREEN = "\u001b[32m"
+private const val ANSI_COLOR_YELLOW = "\u001b[33m"
+private const val ANSI_COLOR_BLUE = "\u001b[34m"
+private const val ANSI_COLOR_MAGENTA = "\u001b[35m"
+private const val ANSI_COLOR_CYAN = "\u001b[36m"
+private const val ANSI_COLOR_WHITE = "\u001b[37m"
+
+private const val ANSI_BG_COLOR_BLACK = "\u001b[40m"
+private const val ANSI_BG_COLOR_RED = "\u001b[41m"
+private const val ANSI_BG_COLOR_GREEN = "\u001b[42m"
+private const val ANSI_BG_COLOR_YELLOW = "\u001b[43m"
+private const val ANSI_BG_COLOR_BLUE = "\u001b[44m"
+private const val ANSI_BG_COLOR_MAGENTA = "\u001b[45m"
+private const val ANSI_BG_COLOR_CYAN = "\u001b[46m"
+private const val ANSI_BG_COLOR_WHITE = "\u001b[47m"
+
+private const val ANSI_COLOR_UNSATURATED_BLACK = "\u001b[90m"
+private const val ANSI_COLOR_UNSATURATED_RED = "\u001b[91m"
+private const val ANSI_COLOR_UNSATURATED_GREEN = "\u001b[92m"
+private const val ANSI_COLOR_UNSATURATED_YELLOW = "\u001b[93m"
+private const val ANSI_COLOR_UNSATURATED_BLUE = "\u001b[94m"
+private const val ANSI_COLOR_UNSATURATED_MAGENTA = "\u001b[95m"
+private const val ANSI_COLOR_UNSATURATED_CYAN = "\u001b[96m"
+private const val ANSI_COLOR_UNSATURATED_WHITE = "\u001b[97m"
+
+private const val ANSI_BG_COLOR_UNSATURATED_BLACK = "\u001b[100m"
+private const val ANSI_BG_COLOR_UNSATURATED_RED = "\u001b[101m"
+private const val ANSI_BG_COLOR_UNSATURATED_GREEN = "\u001b[102m"
+private const val ANSI_BG_COLOR_UNSATURATED_YELLOW = "\u001b[103m"
+private const val ANSI_BG_COLOR_UNSATURATED_BLUE = "\u001b[104m"
+private const val ANSI_BG_COLOR_UNSATURATED_MAGENTA = "\u001b[105m"
+private const val ANSI_BG_COLOR_UNSATURATED_CYAN = "\u001b[106m"
+private const val ANSI_BG_COLOR_UNSATURATED_WHITE = "\u001b[107m"
+
+private const val ANSI_COLOR_RESET = "\u001b[0m"
+
+
 fun printf(test: Int){ 
     
     println("test");
@@ -10,30 +50,42 @@ fun printf(test: Int){
     println(test);
 
 }
-fun asdf(asdf: Any){ 
+
+fun dnd_type_and_value(v_anytpe: Any){ 
     
-    println("param::class.simpleName is:")
-    println(asdf::class.simpleName)
+    println("type:")
+    println(v_anytpe::class.simpleName)
 
-
-    println("param value is: ")
-    println(asdf)
-
-}
-fun dndndnd(asdf: Any){
-
-    println(asdf)
-}
-
-fun dnd(any_param : Any){ 
-
-    println(any_param)
-    println("dnd test")
+    println("value:")
+    println(v_anytpe)
 
 }
-//class asdf { /*...*/ }
+
+fun dnd(v_anytype : Any){ 
+
+    //trying to get the variable name 
+    // but getting this error: 
+    // ... error: References to variables aren't supported yet..
+    //println(::v_anytype.get())
+    //println(::v_anytype.name) 
+
+    //println("param::class.simpleName is:")
+    //println(v_anytype::class.simpleName)
+    //println("param value is: ")
+    //println(v_anytype)
+
+    val ts_ms = System.currentTimeMillis();
+    val ts_formatted = java.sql.Timestamp(ts_ms);
+
+    val ts_hmsms = ts_formatted.toString().split(" ").last()
+    
+    println(ANSI_COLOR_UNSATURATED_BLACK+"$ts_hmsms:"+ANSI_COLOR_RESET+" $v_anytype")
+
+
+}
 
 fun main() {
+
     println("main function  was executed")
 
     printf(10);
