@@ -36,10 +36,10 @@ var compile_and_run_file_content = `
 
 # compile
 ## compile ${kotlin_helpers_name} , a small helper package/library
-kotlinc ./../${kotlin_helpers_name}/${kotlin_helpers_name}.kt -d ${kotlin_helpers_name}.jar
+kotlinc ./../${kotlin_helpers_name}/${kotlin_helpers_name}.kt -d ./../${kotlin_helpers_name}/${kotlin_helpers_name}.jar
 
 ## compile the main file with the dependencies
-kotlinc ${folder_name}.kt -classpath ${kotlin_helpers_name}.jar -include-runtime -d ${folder_name}.jar
+kotlinc ${folder_name}.kt -classpath ./../${kotlin_helpers_name}/${kotlin_helpers_name}.jar -include-runtime -d ${folder_name}.jar
 
 ./run.sh
 

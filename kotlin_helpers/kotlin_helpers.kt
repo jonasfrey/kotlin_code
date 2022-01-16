@@ -10,7 +10,27 @@ fun printf(test: Int){
     println(test);
 
 }
+fun asdf(asdf: Any){ 
+    
+    println("param::class.simpleName is:")
+    println(asdf::class.simpleName)
 
+
+    println("param value is: ")
+    println(asdf)
+
+}
+fun dndndnd(asdf: Any){
+
+    println(asdf)
+}
+
+fun dnd(any_param : Any){ 
+
+    println(any_param)
+    println("dnd test")
+
+}
 //class asdf { /*...*/ }
 
 fun main() {
