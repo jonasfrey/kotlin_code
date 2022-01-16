@@ -40,3 +40,34 @@ kotlinc -help
 ```
 java -jar hello.jar
 ```
+
+
+# kotlinc stuff
+
+
+
+## evaluate expression
+```
+kotlinc -e 'println("System.getProperty(\"java.version\"): " + System.getProperty("java.version"))'
+```
+
+## constants not working with kotlinc -e
+```
+kotlinc -e 'println("k o t l i n thinks PI is: "+PI)'
+```
+
+## evaluate expression
+|error|cause|
+|---|---|
+|no main manifest attribute, in ./kotlin_helpers.jar| a file is missing the `fun main(...`|
+|error: unresolved reference: kotlin_helpers<br />
+import kotlin_helpers.*|the `kotlinc` compiler needs to know the imports `kotlinc datatypes_lesson.kt -d datatypes_lesson.jar -classpath ./../kotlin_helpers/kotlin_helpers.jar`|
+
+
+## evaluate expression
+```
+kotlinc -e 'println("System.getProperty(\"java.version\"): " + System.getProperty("java.version"))'
+```
+
+
+## errors and causes
