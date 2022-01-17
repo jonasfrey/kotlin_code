@@ -5,15 +5,162 @@ package game2048_console
 
 import kotlin_helpers.*
 
+import java.util.Scanner
+
 fun main() {
 
     println("main function  was executed")
     
-    val point_2_d = Point_2_d(2,2)
-    
-    //dnd dump not die from kotlin_helpers
-    dnd(point_2_d)
+    val o_game = Game()
 
+    var chr = readLine()!![0]
+    // println(enteredString)
+
+
+    while(chr.toString() != "q"){
+
+        if(chr.toString() == "w"){
+            o_game.respawn()
+        }
+
+        chr = readLine()!![0]
+    }
+
+}
+
+
+
+class Game() {
+
+    // var a_point_2_d_available = MutableList(1) {Point_2_d(0,0)}
+    
+    var a_point_2_d_available = mutableListOf<Point_2_d>()
+    var a_game_objects = mutableListOf<Game_object>()
+
+
+    var n_width = 4
+    var n_height = 4
+
+    var n_chars_per_value = 5
+
+    val a_canvas = get_empty_a_canvas()
+    
+    var n_value_exponent = 13;
+
+    fun respawn(){
+        
+        a_game_objects = mutableListOf<Game_object>()
+
+        for(i in 0..2){
+            var o_random_game_object = get_random_game_object()
+            a_game_objects.add(
+                o_random_game_object
+            )
+        }
+        
+        render()
+    }
+    fun get_random_game_object(): Game_object{
+
+        var b_o_point_2_d_exists = true;
+        var x = (0..n_width-1).random()
+        var y = (0..n_height-1).random()
+        
+        while(b_o_point_2_d_exists){
+            x = (0..n_width-1).random()
+            y = (0..n_height-1).random()
+
+            b_o_point_2_d_exists = false;
+            
+            for(i in a_game_objects){
+                if(
+                    x == i.o_point_2_d.x && 
+                    y == i.o_point_2_d.y
+                    ){
+                        b_o_point_2_d_exists = true;
+                        //break
+                    }
+                }
+        }
+        val o_game_object = Game_object(
+            Point_2_d(x,y),
+            Math.pow(
+                2.toDouble(),
+                ((0..n_value_exponent).random()).toDouble()
+                ).toInt(),
+            "red"
+        )
+        return o_game_object
+
+    }
+    fun x_y_allowed(x: Int, y : Int): Boolean{ 
+        var b_in_boundries = false
+        if(
+            x >= 0 && x <= n_width
+            &&
+            y >= 0 && y <= n_height
+        ){ 
+            b_in_boundries = true 
+        }
+        return b_in_boundries
+    }
+
+
+    fun render(){
+        var a_canvas = get_empty_a_canvas()
+        
+        for(i in a_game_objects){ 
+            a_canvas[i.o_point_2_d.y][i.o_point_2_d.x] = i.value.toString();
+            print(i.value.toString())
+        }
+        //var n_upscaled_width = width * 2; 
+
+        var lines = (a_canvas.size-1) *  n_chars_per_value
+
+        var y = 0;
+
+        for(line in 0..lines){
+            var s_line = " ".repeat(n_width * n_chars_per_value)
+            if(line % n_chars_per_value == 0){
+                
+                s_line = ""
+
+                for(x in 0..n_width-1){
+                    
+                    // dnd(x)
+                    // dnd(y)
+
+                    s_line += a_canvas[y][x].toString().padStart(n_chars_per_value,' ');
+    
+                    //println(a_canvas[y][x].toString())
+                }
+                y++
+
+            }
+
+            println(s_line)
+        }
+    }
+
+    fun get_empty_a_canvas(): Array<Array<String>>{
+
+        // return Array (2){ " " }
+
+        return Array(n_height) { Array(n_width){" "} }
+    }
+
+
+}
+
+class Game_object(
+    o_point_2_d : Point_2_d, 
+    value: Int, 
+    color: String
+
+){ 
+    var o_point_2_d = o_point_2_d 
+    var value = value 
+    var color = color 
 }
 
 class Point_2_d(

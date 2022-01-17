@@ -1,0 +1,9 @@
+{
+    "code-runner.executorMap": {
+        "kotlin": "cd $dir && java -classpath wtf_kotlin.jar:./../kotlin_helpers/kotlin_helpers.jar wtf_kotlin.Wtf_kotlinKt",
+
+    }
+    // cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt
+    // java -classpath wtf_kotlin.jar:./../kotlin_helpers/kotlin_helpers.jar wtf_kotlin.Wtf_kotlinKt
+
+}
