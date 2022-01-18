@@ -5,7 +5,45 @@ package game2048_console
 
 import kotlin_helpers.*
 
-import java.util.Scanner
+
+
+private const val ANSI_COLOR_BLACK = "\u001b[30m"
+private const val ANSI_COLOR_RED = "\u001b[31m"
+private const val ANSI_COLOR_GREEN = "\u001b[32m"
+private const val ANSI_COLOR_YELLOW = "\u001b[33m"
+private const val ANSI_COLOR_BLUE = "\u001b[34m"
+private const val ANSI_COLOR_MAGENTA = "\u001b[35m"
+private const val ANSI_COLOR_CYAN = "\u001b[36m"
+private const val ANSI_COLOR_WHITE = "\u001b[37m"
+
+private const val ANSI_BG_COLOR_BLACK = "\u001b[40m"
+private const val ANSI_BG_COLOR_RED = "\u001b[41m"
+private const val ANSI_BG_COLOR_GREEN = "\u001b[42m"
+private const val ANSI_BG_COLOR_YELLOW = "\u001b[43m"
+private const val ANSI_BG_COLOR_BLUE = "\u001b[44m"
+private const val ANSI_BG_COLOR_MAGENTA = "\u001b[45m"
+private const val ANSI_BG_COLOR_CYAN = "\u001b[46m"
+private const val ANSI_BG_COLOR_WHITE = "\u001b[47m"
+
+private const val ANSI_COLOR_UNSATURATED_BLACK = "\u001b[90m"
+private const val ANSI_COLOR_UNSATURATED_RED = "\u001b[91m"
+private const val ANSI_COLOR_UNSATURATED_GREEN = "\u001b[92m"
+private const val ANSI_COLOR_UNSATURATED_YELLOW = "\u001b[93m"
+private const val ANSI_COLOR_UNSATURATED_BLUE = "\u001b[94m"
+private const val ANSI_COLOR_UNSATURATED_MAGENTA = "\u001b[95m"
+private const val ANSI_COLOR_UNSATURATED_CYAN = "\u001b[96m"
+private const val ANSI_COLOR_UNSATURATED_WHITE = "\u001b[97m"
+
+private const val ANSI_BG_COLOR_UNSATURATED_BLACK = "\u001b[100m"
+private const val ANSI_BG_COLOR_UNSATURATED_RED = "\u001b[101m"
+private const val ANSI_BG_COLOR_UNSATURATED_GREEN = "\u001b[102m"
+private const val ANSI_BG_COLOR_UNSATURATED_YELLOW = "\u001b[103m"
+private const val ANSI_BG_COLOR_UNSATURATED_BLUE = "\u001b[104m"
+private const val ANSI_BG_COLOR_UNSATURATED_MAGENTA = "\u001b[105m"
+private const val ANSI_BG_COLOR_UNSATURATED_CYAN = "\u001b[106m"
+private const val ANSI_BG_COLOR_UNSATURATED_WHITE = "\u001b[107m"
+
+private const val ANSI_COLOR_RESET = "\u001b[0m"
 
 fun main() {
 
@@ -22,7 +60,7 @@ fun main() {
     var chr = readLine()!![0]
     // println(enteredString)
 
-    while(chr.toString() != "q"){
+    while(chr.toString() != "q" && !o_game.b_is_over){
 
         if(chr.toString() == "w"){
             o_game.moveUp()
@@ -35,6 +73,9 @@ fun main() {
         }
         if(chr.toString() == "d"){
             o_game.moveRight()
+        }
+        if(chr.toString() == "q"){
+            o_game.gameOver()
         }
 
         chr = readLine()!![0]
@@ -51,10 +92,12 @@ class Game() {
     var a_point_2_d_available = mutableListOf<Point_2_d>()
     var a_game_objects = mutableListOf<Game_object>()
 
-
     var n_width = 4
     var n_height = 4
 
+    var a_game_objects_positions_changed = false
+
+    var b_is_over = false 
 
     var line_x_pre_suffix = "|"
     var line_y_pre_suffix = "-"
@@ -68,8 +111,34 @@ class Game() {
     var n_chars_per_x = 2
 
 
+    init{
+        a_game_objects.add(
+            Game_object(
+                Point_2_d(0, 1),
+                2,
+                "red"
+            )
+        )
+        
+        a_game_objects.add(
+            Game_object(
+                Point_2_d(0, 3),
+                2,
+                "red"
+            )
+        )
+        render()
+    }
 
 
+    fun gameOver(){
+        val a_game_objects_sorted = a_game_objects.sortBy{ 
+            o -> o.value 
+        }
+        println("GAME OVER!")
+        
+        // println("score:"+a_game_objects_sorted[0].value)
+    }
     fun moveUp(){
         new_frame("0", "-")
     }
@@ -88,59 +157,126 @@ class Game() {
         return a_game_objects.count() == (n_width * n_height);
     
     }
-    fun fill_completly_with_random(){
-        if(f_b_game_is_over()){
-            println("GAME OVER!")
-        }
 
-        for(i in 0..15){
-            var o_random_game_object = get_random_game_object()
-            a_game_objects.add(
-                o_random_game_object
-            )
-        }
-        
-        render()
-    }
 
     fun new_frame(s_direction_x: String, s_direction_y: String ){
         
         //a_game_objects = mutableListOf<Game_object>()
+        b_is_over = f_b_game_is_over()
+        if(b_is_over){
+            gameOver()
+        }
 
-        if(f_b_game_is_over()){
-            println("GAME OVER!")
+        a_game_objects_positions_changed = false
+
+        // we first have to update the game objects !!
+        update_a_game_objects(s_direction_x, s_direction_y) 
+
+        if(a_game_objects_positions_changed){
+            spawn_new_game_object()
         }
 
         // add new object
-        var o_random_game_object = get_random_game_object()
-        a_game_objects.add(
-            o_random_game_object
-        )
-
-        update_states(s_direction_x, s_direction_y)
 
         render()
     }
 
-    fun update_states(s_direction_x: String, s_direction_y: String){
+    fun spawn_new_game_object(){
+        while(true){
 
-        println(s_direction_x)
-        println(s_direction_y)
+            var o_random_game_object = get_random_game_object()
+            
+            var a_filtered_a_game_objects = a_game_objects.filter{
+                i -> 
+                i.o_point_2_d.x == o_random_game_object.o_point_2_d.x
+                &&
+                i.o_point_2_d.y == o_random_game_object.o_point_2_d.y
+            }
+            if(a_filtered_a_game_objects.isNullOrEmpty()){
+                dnd("new random game object")
+                dnd("o_random_game_object.o_point_2_d.x")
+                dnd(o_random_game_object.o_point_2_d.x)
+                dnd("o_random_game_object.o_point_2_d.y")
+                dnd(o_random_game_object.o_point_2_d.y)
 
-        println(a_game_objects)
+                a_game_objects.add(
+                    o_random_game_object
+                )
+
+                break
+            }
+        }
+    }
+    /*
+    * loops through the rows or columns of the counter axis 
+    if input was ↑↓ up or down
+        loops through x axis 
+    if input was ←→ left or right
+        loops through y axis 
+    */
+
+    fun update_a_game_objects(s_direction_x: String, s_direction_y: String){
         
-        var free_count = 0; 
+
+        if(s_direction_y != "0"){ // up
+            for(n_x in (0..(n_width-1))){
+                update_row_or_col(s_direction_y, "y", n_x);
+            }
+        }
+        if(s_direction_x != "0"){ // up
+            for(n_y in (0..(n_height-1))){
+                update_row_or_col(s_direction_x, "x", n_y);
+            }
+        }
+    }
+
+    /* 
+    * loops through a row or column from behind, 
+    * checks every cell if there is an object 
+    *  if no object
+    *       n_free_count ++
+    * 
+    *  if object
+    *       if last object matches value
+    *           last object gets added the value 2 + 2 = 4
+    *           current object gets destroyed
+    *           n_free_count ++
+    *
+    */
+    fun update_row_or_col(s_direction: String, s_axis: String, n_index_other_axis: Int){
+
+        var n_free_count = 0;
+
         var last_o_game_object : Game_object? = null;
-        var n_x = 0;
 
-        var s_direction_operator = "-"
+        var n_end =  n_height -1
 
-        for(n_y in 0..(n_height-1)){
+        if(s_axis == "y"){
+            n_end = n_height -1
+        }
+        if(s_axis == "x"){
+            n_end = n_width -1
+        }
 
-            var a_filtered_a_game_objects = a_game_objects.filter{i -> i.o_point_2_d.x == n_x && i.o_point_2_d.y == n_y}
+        for(n_i in 0..n_end){
+            
+            var n_index = n_i
+
+            if(s_direction == "+"){
+                n_index = n_end - n_i
+            }
+
+            var a_filtered_a_game_objects = a_game_objects.filter{i -> i.o_point_2_d.x == n_index_other_axis && i.o_point_2_d.y == n_index}
+
+            if(s_axis == "y"){
+                a_filtered_a_game_objects = a_game_objects.filter{i -> i.o_point_2_d.x == n_index_other_axis && i.o_point_2_d.y == n_index}
+            }
+            if(s_axis == "x"){
+                a_filtered_a_game_objects = a_game_objects.filter{i -> i.o_point_2_d.x == n_index && i.o_point_2_d.y == n_index_other_axis}
+            }
             
             if(a_filtered_a_game_objects.isNullOrEmpty()){
-                free_count++;
+                n_free_count++;
                 
             }else{
 
@@ -150,56 +286,56 @@ class Game() {
                     
                     // destroy object 
                     // set last object val 
-                    // free_count ++
+                    // n_free_count ++
                     last_o_game_object.value += o_game_object.value // 2+2 = 4... , or with other nums 
-                    free_count += 1
+                    n_free_count += 1
                     a_game_objects.remove(o_game_object) // destroy object // manually garbarge collect? 
                 }
 
                 if(last_o_game_object?.value != o_game_object.value){
-
-                    // o_game_object.o_point_2_d.y = eval(s_direction_operator + free_count.toString())
-                    if(s_direction_operator == "-"){
-                        o_game_object.o_point_2_d.y -= free_count
+                    if(n_free_count > 0){
+                        a_game_objects_positions_changed = true
                     }
-                    if(s_direction_operator == "+"){
-                        o_game_object.o_point_2_d.y += free_count
+                    //o_game_object.o_point_2_d.y = eval(s_direction + n_free_count.toString())
+                    if(s_direction == "-"){
+                        // o_game_object.o_point_2_d[axis] -= n_free_count
+                        if(s_axis == "x"){
+                            o_game_object.o_point_2_d.x -= n_free_count
+                        }
+                        if(s_axis == "y"){
+                            o_game_object.o_point_2_d.y -= n_free_count
+                        }
+                        
+                    }
+                    if(s_direction == "+"){
+                        // o_game_object.o_point_2_d[axis] += n_free_count
+                        if(s_axis == "x"){
+                            o_game_object.o_point_2_d.x += n_free_count
+                        }
+                        if(s_axis == "y"){
+                            o_game_object.o_point_2_d.y += n_free_count
+                        }
                     }
 
                 }
+
+                last_o_game_object = o_game_object
 
             }
 
         }
     }
     fun get_random_game_object(): Game_object{
-
-        var b_o_point_2_d_exists = true;
+        
         var x = (0..n_width-1).random()
         var y = (0..n_height-1).random()
-        
-        val n_counter = 0;
-        while(b_o_point_2_d_exists && n_counter < (n_width * n_height)){
-            x = (0..n_width-1).random()
-            y = (0..n_height-1).random()
 
-            b_o_point_2_d_exists = false;
-            
-            for(i in a_game_objects){
-                if(
-                    x == i.o_point_2_d.x && 
-                    y == i.o_point_2_d.y
-                    ){
-                        b_o_point_2_d_exists = true;
-                        //break
-                    }
-                }
-        }
         val o_game_object = Game_object(
             Point_2_d(x,y),
             Math.pow(
                 2.toDouble(),
-                ((1..n_value_max_exponent).random()).toDouble()
+                1.toDouble(),
+                //((1..n_value_max_exponent).random()).toDouble()
                 ).toInt(),
             "red"
         )
@@ -224,6 +360,7 @@ class Game() {
         var a_canvas = get_empty_a_canvas()
         
         for(i in a_game_objects){ 
+
             a_canvas[i.o_point_2_d.y][i.o_point_2_d.x] = i.value.toString();
             //print(i.value.toString())
         }
@@ -245,8 +382,20 @@ class Game() {
                 s_line = line_x_pre_suffix
 
                 for(x in 0..n_width-1){
+
+                    var s_value = a_canvas[y][x].toString()
+                    s_value = s_value.padStart(n_chars_per_x, ' '); 
+
+                    if(a_canvas[y][x] == "2"){ s_value = ANSI_COLOR_UNSATURATED_RED + s_value + ANSI_COLOR_RESET }
+                    if(a_canvas[y][x] == "4"){ s_value = ANSI_COLOR_UNSATURATED_GREEN + s_value + ANSI_COLOR_RESET }
+                    if(a_canvas[y][x] == "8"){ s_value = ANSI_COLOR_UNSATURATED_YELLOW + s_value + ANSI_COLOR_RESET }
+                    if(a_canvas[y][x] == "16"){ s_value = ANSI_COLOR_UNSATURATED_BLUE + s_value + ANSI_COLOR_RESET }
+                    if(a_canvas[y][x] == "32"){ s_value = ANSI_COLOR_UNSATURATED_MAGENTA + s_value + ANSI_COLOR_RESET }
+                    if(a_canvas[y][x] == "64"){ s_value = ANSI_COLOR_UNSATURATED_CYAN + s_value + ANSI_COLOR_RESET }
                     
-                    s_line += a_canvas[y][x].toString().padStart(n_chars_per_x,' ')+line_x_pre_suffix;
+
+                    s_line += s_value+line_x_pre_suffix
+                    // s_line += ANSI_COLOR_UNSATURATED_RED+s_value+ANSI_COLOR_RESET +line_x_pre_suffix;
     
                     //println(a_canvas[y][x].toString())
                 }
