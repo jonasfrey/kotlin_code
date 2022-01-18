@@ -9,18 +9,32 @@ import java.util.Scanner
 
 fun main() {
 
-    println("main function  was executed")
+    //    println("main function  was executed")
+
+    println("""
+    WELCOME TO 2048
+    a=Left, s=Right, w=Up, y=Down, q=Quit
+    """.trimIndent()
+    )
     
     val o_game = Game()
 
     var chr = readLine()!![0]
     // println(enteredString)
 
-
     while(chr.toString() != "q"){
 
         if(chr.toString() == "w"){
-            o_game.respawn()
+            o_game.moveUp()
+        }
+        if(chr.toString() == "s"){
+            o_game.moveDown()
+        }
+        if(chr.toString() == "a"){
+            o_game.moveLeft()
+        }
+        if(chr.toString() == "d"){
+            o_game.moveRight()
         }
 
         chr = readLine()!![0]
@@ -41,17 +55,45 @@ class Game() {
     var n_width = 4
     var n_height = 4
 
-    var n_chars_per_value = 5
+
+    var line_x_pre_suffix = "|"
+    var line_y_pre_suffix = "-"
 
     val a_canvas = get_empty_a_canvas()
     
-    var n_value_exponent = 13;
+    // var n_value_max_exponent = 13;
+    var n_value_max_exponent = 6;
 
-    fun respawn(){
+    var n_chars_per_y = 1
+    var n_chars_per_x = 2
+
+
+
+
+    fun moveUp(){
+        new_frame("0", "-")
+    }
+    fun moveDown(){
+        new_frame("0", "+")
+    }
+    fun moveLeft(){
+        new_frame("-", "0")
+    }
+    fun moveRight(){
+        new_frame("+", "0")
+    }
+
+    fun f_b_game_is_over(): Boolean{
         
-        a_game_objects = mutableListOf<Game_object>()
+        return a_game_objects.count() == (n_width * n_height);
+    
+    }
+    fun fill_completly_with_random(){
+        if(f_b_game_is_over()){
+            println("GAME OVER!")
+        }
 
-        for(i in 0..2){
+        for(i in 0..15){
             var o_random_game_object = get_random_game_object()
             a_game_objects.add(
                 o_random_game_object
@@ -60,13 +102,84 @@ class Game() {
         
         render()
     }
+
+    fun new_frame(s_direction_x: String, s_direction_y: String ){
+        
+        //a_game_objects = mutableListOf<Game_object>()
+
+        if(f_b_game_is_over()){
+            println("GAME OVER!")
+        }
+
+        // add new object
+        var o_random_game_object = get_random_game_object()
+        a_game_objects.add(
+            o_random_game_object
+        )
+
+        update_states(s_direction_x, s_direction_y)
+
+        render()
+    }
+
+    fun update_states(s_direction_x: String, s_direction_y: String){
+
+        println(s_direction_x)
+        println(s_direction_y)
+
+        println(a_game_objects)
+        
+        var free_count = 0; 
+        var last_o_game_object : Game_object? = null;
+        var n_x = 0;
+
+        var s_direction_operator = "-"
+
+        for(n_y in 0..(n_height-1)){
+
+            var a_filtered_a_game_objects = a_game_objects.filter{i -> i.o_point_2_d.x == n_x && i.o_point_2_d.y == n_y}
+            
+            if(a_filtered_a_game_objects.isNullOrEmpty()){
+                free_count++;
+                
+            }else{
+
+                var o_game_object = a_filtered_a_game_objects.first();
+                
+                if(last_o_game_object?.value == o_game_object.value){
+                    
+                    // destroy object 
+                    // set last object val 
+                    // free_count ++
+                    last_o_game_object.value += o_game_object.value // 2+2 = 4... , or with other nums 
+                    free_count += 1
+                    a_game_objects.remove(o_game_object) // destroy object // manually garbarge collect? 
+                }
+
+                if(last_o_game_object?.value != o_game_object.value){
+
+                    // o_game_object.o_point_2_d.y = eval(s_direction_operator + free_count.toString())
+                    if(s_direction_operator == "-"){
+                        o_game_object.o_point_2_d.y -= free_count
+                    }
+                    if(s_direction_operator == "+"){
+                        o_game_object.o_point_2_d.y += free_count
+                    }
+
+                }
+
+            }
+
+        }
+    }
     fun get_random_game_object(): Game_object{
 
         var b_o_point_2_d_exists = true;
         var x = (0..n_width-1).random()
         var y = (0..n_height-1).random()
         
-        while(b_o_point_2_d_exists){
+        val n_counter = 0;
+        while(b_o_point_2_d_exists && n_counter < (n_width * n_height)){
             x = (0..n_width-1).random()
             y = (0..n_height-1).random()
 
@@ -86,7 +199,7 @@ class Game() {
             Point_2_d(x,y),
             Math.pow(
                 2.toDouble(),
-                ((0..n_value_exponent).random()).toDouble()
+                ((1..n_value_max_exponent).random()).toDouble()
                 ).toInt(),
             "red"
         )
@@ -107,50 +220,59 @@ class Game() {
 
 
     fun render(){
+
         var a_canvas = get_empty_a_canvas()
         
         for(i in a_game_objects){ 
             a_canvas[i.o_point_2_d.y][i.o_point_2_d.x] = i.value.toString();
-            print(i.value.toString())
+            //print(i.value.toString())
         }
         //var n_upscaled_width = width * 2; 
 
-        var lines = (a_canvas.size-1) *  n_chars_per_value
+        var lines = (a_canvas.size-1) *  n_chars_per_y
 
         var y = 0;
 
+        var divider_y = line_y_pre_suffix.repeat((n_width * n_chars_per_x) + n_width+1)
+
+
         for(line in 0..lines){
-            var s_line = " ".repeat(n_width * n_chars_per_value)
-            if(line % n_chars_per_value == 0){
+            
+            var s_line = " ".repeat(n_width * n_chars_per_x)
+
+            if(line % n_chars_per_y == 0){
                 
-                s_line = ""
+                s_line = line_x_pre_suffix
 
                 for(x in 0..n_width-1){
                     
-                    // dnd(x)
-                    // dnd(y)
-
-                    s_line += a_canvas[y][x].toString().padStart(n_chars_per_value,' ');
+                    s_line += a_canvas[y][x].toString().padStart(n_chars_per_x,' ')+line_x_pre_suffix;
     
                     //println(a_canvas[y][x].toString())
                 }
                 y++
+                println(divider_y) 
 
             }
 
             println(s_line)
         }
+
+        println(divider_y) 
+
     }
 
     fun get_empty_a_canvas(): Array<Array<String>>{
 
         // return Array (2){ " " }
 
-        return Array(n_height) { Array(n_width){" "} }
+        return Array(n_height) { Array(n_width){" ".padStart(n_chars_per_x,' ')} }
     }
 
 
 }
+
+
 
 class Game_object(
     o_point_2_d : Point_2_d, 
@@ -166,7 +288,7 @@ class Game_object(
 class Point_2_d(
     x: Int, 
     y: Int) {
-    val x = x
-    val y = y 
+    var x = x
+    var y = y 
 }
 
