@@ -12,17 +12,83 @@ fun main() {
     println(a_numbers.joinToString(", "))
     dnd(a_numbers)
 
+    println(a_numbers.filter{i -> i == 2})
 
-    val s_type = v_anytype::class.simpleName
-    println("type: ")
-    println(s_type)
-    
-    if(s_type.lowercase() == "intarray"){
-        // for(i in 1..v_anytype.lastIndex){ 
-        //     println(v_anytype[i].toString()+", ")
-        // }
-        //val s_v_anytupe = "[" + v_anytype.joinToString(",") + "]"
+    println(a_numbers)
+    dnd(a_numbers)
+
+    var a_o_simple_object = mutableListOf<O_simple_object>()
+
+    a_o_simple_object.add(O_simple_object(10))
+    a_o_simple_object.add(O_simple_object(20))
+    a_o_simple_object.add(O_simple_object(33))
+    a_o_simple_object.add(O_simple_object(44))
+    a_o_simple_object.add(O_simple_object(55))
+    a_o_simple_object.add(O_simple_object(77))
+
+    var filtered_a_o_simple_object = a_o_simple_object.filter{i -> i.n_val > 20}
+
+    dnd("not filtered")
+    for(o in a_o_simple_object){
+        dnd(o.n_val)
     }
+
+    dnd("filtered")
+    for(o in filtered_a_o_simple_object){
+        dnd(o.n_val)
+    }
+
+    filtered_a_o_simple_object = a_o_simple_object.filter{ i -> i.n_val > 100}        
+
+    dnd("filtered but filter condition was always false")
+    for(o in filtered_a_o_simple_object){
+        dnd(o.n_val)
+    }
+
+    // dnd(filtered_a_o_simple_object.first()) // java.util.NoSuchElementException:
+
+    dnd(filtered_a_o_simple_object.isNullOrEmpty())
+    if(filtered_a_o_simple_object.isNullOrEmpty()){
+        dnd("filtered list .isNullOrEmpty returned true")
+    }
+
+
+    dnd("remove object from array")
+
+    filtered_a_o_simple_object = a_o_simple_object.filter{ i -> i.n_val == 44}
+
+    var o_filtered_object = filtered_a_o_simple_object.first()
+    
+    var index_of_o_filtered_object = a_o_simple_object.indexOf(o_filtered_object)
+    
+    //      a_o_simple_object.remove(o_filtered_object)
+    
+    a_o_simple_object.removeAt(index_of_o_filtered_object)
+
+    dnd("removed object with n_val 44")
+    for(o in a_o_simple_object){
+        dnd(o.n_val)
+    }
+    
+    a_o_simple_object.remove(
+        a_o_simple_object.filter{ i -> i.n_val == 55}.first()
+    )
+    dnd("removed object with n_val 55")
+    for(o in a_o_simple_object){
+        dnd(o.n_val)
+    }
+
+    // val s_type = v_anytype::class.simpleName
+
+    // println("type: ")
+    // println(s_type)
+    
+    // if(s_type.lowercase() == "intarray"){
+    //     // for(i in 1..v_anytype.lastIndex){ 
+    //     //     println(v_anytype[i].toString()+", ")
+    //     // }
+    //     //val s_v_anytupe = "[" + v_anytype.joinToString(",") + "]"
+    // }
 
     // println(a_numbers.joinToString(","))
 
@@ -58,4 +124,8 @@ fun main() {
     //dnd(a_numbers)
 
     println("main function  was executed")
+}
+
+class O_simple_object(n_val: Int){
+    var n_val = n_val
 }

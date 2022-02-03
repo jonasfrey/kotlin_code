@@ -118,7 +118,6 @@ fun arrays(){
     print(a_fixed_nums.size)
 
 
-
     val a_mutable_list_of_objects = MutableList(1) { Simple_object(1) }
     
     println(a_mutable_list_of_objects)
@@ -136,8 +135,39 @@ fun arrays(){
     // }
 
     dnd(a_fixed_nums)
+
+
 }
 
+fun strings(){
+
+    var s_test = "1234"; 
+    println(s_test.toInt());
+
+    var s_test_not_trimmed = "  1234  "; 
+    //      println(s_test_not_trimmed.toInt()); // java.lang.NumberFormatException: For input string:
+ 
+    var s_test_trimmed = s_test_not_trimmed.trim();
+    println(s_test_trimmed.toInt());
+
+
+    var s_not_colored =  "NO_ANSI_AT_ALL"
+    println(s_not_colored)
+    
+    var s_colored = ANSI_BG_COLOR_GREEN+"ANSI_BG_COLOR_GREEN"+ANSI_COLOR_RESET
+    println(s_colored)
+
+    var s_test_colored_vs_not_colored_n = "s_test_colored_vs_not_colored"; 
+    println(s_test_colored_vs_not_colored_n)
+
+    println("length of same string: not colored: "+ s_test_colored_vs_not_colored_n.length)
+    
+    var s_test_colored_vs_not_colored = ANSI_COLOR_RED+"s_test_colored_vs_not_colored"+ANSI_COLOR_RESET; 
+    println(s_test_colored_vs_not_colored)
+
+    println("length of same string: colored: "+ s_test_colored_vs_not_colored.length); 
+    
+}
 
 class Simple_object(
     n_num: Int) {
@@ -149,13 +179,11 @@ fun main() {
 
     // integers()
 
-    floats()
+    // floats()
 
-    arrays()
+    // arrays()
 
-    val int : Int = 2000000000;
-    dnd(int);
+    strings()
 
 
-    println("main function  was executed")
 }
