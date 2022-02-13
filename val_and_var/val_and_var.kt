@@ -7,6 +7,7 @@ import kotlin_helpers.*
 
 fun main() {
 
+    // "val ..." is for read-only variables
     val s_val_name = "hans" 
     dnd(s_val_name)
 
@@ -14,6 +15,7 @@ fun main() {
     //      dnd(s_val_name)
     // error: val cannot be reassigned
 
+    // "var ..." is for mutable/changeable variables 
     var s_var_name = "hans" 
     dnd(s_var_name)
     

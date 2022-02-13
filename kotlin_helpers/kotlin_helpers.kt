@@ -188,3 +188,15 @@ fun main() {
     printf(10);
 
 }
+
+// If you don’t use a visibility modifier, public is used by default, which means that your declarations will be visible everywhere.
+class Public_class_from_kotlin_helpers()
+
+// If you mark a declaration as private, it will only be visible inside the file that contains the declaration.
+class Private_class_from_kotlin_helpers private constructor(a: Any)
+
+// If you mark it as internal, it will be visible everywhere in the same module.
+class Internal_class_from_kotlin_helpers internal constructor(a: Any)
+
+// The protected modifier is not available for top-level declarations.
+
