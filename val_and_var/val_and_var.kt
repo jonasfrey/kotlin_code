@@ -18,6 +18,9 @@ fun main() {
     // "var ..." is for mutable/changeable variables 
     var s_var_name = "hans" 
     dnd(s_var_name)
+
+    s_var_name = "tobi"
+    dnd("after mutation: " + s_var_name)
     
 
     println("main function  was executed")
